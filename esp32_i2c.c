@@ -216,3 +216,9 @@ esp_err_t sw_i2c_master_read(uint8_t *buffer, uint16_t length, bool ack) //, boo
 
     return ESP_OK;
 }
+
+esp_err_t sw_i2c_master_read_byte(uint8_t *buffer, bool ack)
+{
+    *buffer = sw_i2c_read_byte(ack);
+    return ESP_OK;
+};
