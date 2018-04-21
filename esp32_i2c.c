@@ -43,6 +43,8 @@ static uint8_t g_i2c_scl;
 static const char* TAG = "software_i2c";
 
 /* https://esp-idf.readthedocs.io/en/latest/api-reference/peripherals/i2c.html#_CPPv211i2c_set_pin10i2c_port_tii13gpio_pullup_t13gpio_pullup_t10i2c_mode_t */
+
+/* esp_err_t i2c_set_pin(i2c_port_t i2c_num, int sda_io_num, int scl_io_num, gpio_pullup_t sda_pullup_en, gpio_pullup_t scl_pullup_en, i2c_mode_t mode) */
 esp_err_t sw_i2c_init(uint8_t sda, uint8_t scl)
 {
     ESP_LOGD(TAG, "Initializing software i2c with data pin %d.", sda);
@@ -60,6 +62,7 @@ esp_err_t sw_i2c_init(uint8_t sda, uint8_t scl)
     return ESP_OK;
 }
 
+/* esp_err_t i2c_master_start(i2c_cmd_handle_t cmd_handle) */
 esp_err_t sw_i2c_master_start()
 {
     uint32_t stretch = CLOCK_STRETCH_TIMEOUT;
@@ -89,6 +92,7 @@ esp_err_t sw_i2c_master_start()
     return ESP_OK;
 }
 
+/* esp_err_t i2c_master_stop(i2c_cmd_handle_t cmd_handle) */
 esp_err_t sw_i2c_master_stop()
 {
     uint32_t stretch = CLOCK_STRETCH_TIMEOUT;
@@ -169,16 +173,7 @@ static uint8_t sw_i2c_read_byte(bool ack)
     return byte;
 }
 
-// Write a byte to I2C bus. Return 0 if ack by the slave.
-/* https://github.com/espressif/esp-idf/blob/master/components/driver/i2c.c#L944-L956
-
-cmd.ack_en = ack_en; enable
-cmd.ack_exp = 0; excpect
-cmd.ack_val = 0; send
-
-*/
-
-static bool sw_i2c_write_byte(uint8_t byte) //, bool ack_enable)
+static bool sw_i2c_write_byte(uint8_t byte)
 {
     uint8_t bit;
     bool ack;
@@ -191,13 +186,15 @@ static bool sw_i2c_write_byte(uint8_t byte) //, bool ack_enable)
     return ack;
 }
 
-esp_err_t sw_i2c_master_write_byte(uint8_t buffer) // ack_enable??
+/* esp_err_t i2c_master_write_byte(i2c_cmd_handle_t cmd_handle, uint8_t data, bool ack_en) */
+esp_err_t sw_i2c_master_write_byte(uint8_t buffer)
 {
     return sw_i2c_write_byte(buffer);
     //return ESP_OK;
 }
 
-esp_err_t sw_i2c_master_write(uint8_t *buffer, uint8_t length) // ack_enable??
+/* esp_err_t i2c_master_write(i2c_cmd_handle_t cmd_handle, uint8_t *data, size_t data_len, bool ack_en) */
+esp_err_t sw_i2c_master_write(uint8_t *buffer, uint8_t length) // bool ack_enable??
 {
     while (length--) {
         sw_i2c_write_byte(*buffer++);
@@ -206,7 +203,15 @@ esp_err_t sw_i2c_master_write(uint8_t *buffer, uint8_t length) // ack_enable??
     return ESP_OK;
 }
 
-esp_err_t sw_i2c_master_read(uint8_t *buffer, uint16_t length, bool ack) //, bool expect_ack)
+/* esp_err_t i2c_master_read_byte(i2c_cmd_handle_t cmd_handle, uint8_t *data, i2c_ack_type_t ack) */
+esp_err_t sw_i2c_master_read_byte(uint8_t *buffer, bool ack)
+{
+    *buffer = sw_i2c_read_byte(ack);
+    return ESP_OK;
+};
+
+/* esp_err_t i2c_master_read(i2c_cmd_handle_t cmd_handle, uint8_t *data, size_t data_len, i2c_ack_type_t ack) */
+esp_err_t sw_i2c_master_read(uint8_t *buffer, uint16_t length, bool ack)
 {
     while(length) {
         *buffer = sw_i2c_read_byte(ack);
@@ -217,8 +222,3 @@ esp_err_t sw_i2c_master_read(uint8_t *buffer, uint16_t length, bool ack) //, boo
     return ESP_OK;
 }
 
-esp_err_t sw_i2c_master_read_byte(uint8_t *buffer, bool ack)
-{
-    *buffer = sw_i2c_read_byte(ack);
-    return ESP_OK;
-};
