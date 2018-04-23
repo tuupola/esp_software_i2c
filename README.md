@@ -15,7 +15,7 @@ $ git clone git@github.com:tuupola/esp-software-i2c.git
 
 ## Usage
 
-Software driver API mimics the original [ESP-IDF hardware master API](https://esp-idf.readthedocs.io/en/latest/api-reference/peripherals/i2c.html#i2c-api-master-mode). Biggest difference is that there is no [command link](https://esp-idf.readthedocs.io/en/latest/api-reference/peripherals/i2c.html#_CPPv219i2c_cmd_link_createv) and instead of queuing commands are sent directly to the I2C bus. Example below reads `SLAVE_DATA_LENGTH` bytes from `SLAVE_ADDRESS` and dumps it to console.
+Software driver API mimics the original [ESP-IDF hardware master API](https://esp-idf.readthedocs.io/en/latest/api-reference/peripherals/i2c.html#i2c-api-master-mode). Biggest difference is that there is no [command link](https://esp-idf.readthedocs.io/en/latest/api-reference/peripherals/i2c.html#_CPPv219i2c_cmd_link_createv) and instead of queuing commands are sent directly to the I2C bus. Example below reads `SLAVE_DATA_LENGTH` bytes from `SLAVE_ADDRESS` and dumps it to console. See [tuupola/esp-examples](https://github.com/tuupola/esp-examples/tree/master/008-i2c-sw-master) for better example.
 
 ```c
 static const char *TAG = "sofware_i2c";
